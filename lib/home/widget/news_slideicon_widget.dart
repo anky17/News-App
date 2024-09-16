@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/home/model/news_icon_model.dart';
+import 'package:news_app/api/api_model.dart';
 
 class NewsSideIcon extends StatelessWidget {
-  final NewsSlideIconModel slideList;
+  final Articles? slideList;
   const NewsSideIcon({super.key, required this.slideList});
 
   @override
@@ -15,7 +15,7 @@ class NewsSideIcon extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 37, 112, 39),
       ),
       child: Text(
-        slideList.iconText,
+        slideList?.source?.name ?? "n/a",
         style: const TextStyle(color: Colors.white),
       ),
     );

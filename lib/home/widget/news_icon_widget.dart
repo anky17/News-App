@@ -16,15 +16,16 @@ class NewsIconWidget extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: const [
           BoxShadow(
-              color: Color.fromARGB(255, 54, 174, 244),
-              offset: Offset(0, 4),
-              spreadRadius: 2,
-              blurRadius: 6),
+            offset: Offset(0, 4),
+            spreadRadius: 2,
+            blurRadius: 6,
+          ),
         ],
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
             image: NetworkImage(newsList?.urlToImage ?? "n/a"),
-            fit: BoxFit.fill),
+            fit: BoxFit.fill,
+            opacity: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,8 +43,10 @@ class NewsIconWidget extends StatelessWidget {
                 style: const TextStyle(color: Colors.white),
               )),
           Text(
-            newsList?.publishedAt.toString() ?? "n/a",
+            newsList?.title ?? "n/a",
             style: const TextStyle(color: Colors.white, fontSize: 17),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
           const SizedBox(height: 10),
           Row(

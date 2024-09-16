@@ -1,10 +1,10 @@
 // lib/custom_list_item.dart
 
 import 'package:flutter/material.dart';
-import 'package:news_app/home/model/news_profile_model.dart';
+import 'package:news_app/api/api_model.dart';
 
 class NewsListCard extends StatelessWidget {
-  final NewsProfileItem item;
+  final Articles? item;
 
   const NewsListCard({
     super.key,
@@ -24,8 +24,8 @@ class NewsListCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
-            child: Image.asset(
-              item.imagePath,
+            child: Image.network(
+              item?.urlToImage ?? "n/a",
               height: 100,
               width: 100,
               fit: BoxFit.fill,
@@ -38,28 +38,32 @@ class NewsListCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.asset(
-                        item.imagePath,
-                        height: 20,
-                        width: 20,
-                        fit: BoxFit.fill,
+                    Container(
+                      height: 20,
+                      width: 20,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(item?.urlToImage ?? "n/a"),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 5),
-                    Text(item.title),
+                    Text(
+                      item?.source?.name ?? "n/a",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  item.subtitle,
-                  maxLines: 2, // Limit the text to 2 lines
+                  item?.description ?? "n/a",
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 5),
                 Row(
-                  children: [Text(item.dateAndType)],
+                  children: [Text(item?.publishedAt ?? "n/a")],
                 )
               ],
             ),
