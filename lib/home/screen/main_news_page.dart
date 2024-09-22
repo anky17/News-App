@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/api/api_model.dart';
 import 'package:news_app/api/api_service.dart';
-
 import 'package:news_app/home/widget/news_icon_widget.dart';
-import 'package:news_app/home/widget/news_slideicon_widget.dart';
 import 'package:news_app/home/widget/news_listcard_widget.dart';
+import 'package:news_app/home/widget/news_slideicon_widget.dart';
 
 class MainNewsPage extends StatefulWidget {
   const MainNewsPage({super.key});
@@ -13,6 +13,28 @@ class MainNewsPage extends StatefulWidget {
 }
 
 class _MainNewsPageState extends State<MainNewsPage> {
+  List<Articles>? articles = [];
+  ApiService service = ApiService();
+  bool isLoading = false;
+
+  void fetchData() async {
+    try {
+      isLoading = true;
+      articles = await service.fetchAlbum();
+    } catch (e) {
+      throw Exception(e.toString());
+    } finally {
+      isLoading = false;
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,26 +78,23 @@ class _MainNewsPageState extends State<MainNewsPage> {
                 },
                 future: ApiService().fetchAlbum(),
               ),
-              FutureBuilder(
-                builder: (context, snapshot) {
-                  return Container(
-                    margin: const EdgeInsets.only(left: 8, top: 8, bottom: 5),
-                    height: 40,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: snapshot.data?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return NewsSideIcon(slideList: snapshot.data?[index]);
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(width: 10);
-                      },
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : Container(
+                      margin: const EdgeInsets.only(left: 8, top: 8, bottom: 5),
+                      height: 40,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemCount: articles?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          return NewsSlideIcon(slideList: articles?[index]);
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(width: 10);
+                        },
+                      ),
                     ),
-                  );
-                },
-                future: ApiService().fetchAlbum(),
-              ),
               const SizedBox(height: 13),
               FutureBuilder(
                 builder: (context, snapshot) {

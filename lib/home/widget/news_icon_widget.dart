@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/api/api_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class NewsIconWidget extends StatelessWidget {
+class NewsIconWidget extends StatefulWidget {
   final Articles? newsList;
-
   const NewsIconWidget({super.key, required this.newsList});
+
+  @override
+  State<NewsIconWidget> createState() => _NewsIconWidgetState();
+}
+
+class _NewsIconWidgetState extends State<NewsIconWidget> {
+  bool isClicked = true;
+  Future<void> launchNewsUrl(String link) async {
+    final Uri url = Uri.parse(link);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,27 +36,36 @@ class NewsIconWidget extends StatelessWidget {
         ],
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
-            image: NetworkImage(newsList?.urlToImage ?? "n/a"),
-            fit: BoxFit.fill,
-            opacity: 0.5),
+          image: widget.newsList?.urlToImage != null
+              ? NetworkImage(widget.newsList!.urlToImage!)
+              : const AssetImage('assets/images/mt.png') as ImageProvider,
+          fit: BoxFit.fill,
+          opacity: 0.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 141, 73, 68),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                minimumSize: const Size(50, 30),
-              ),
-              child: Text(
-                newsList?.author.toString() ?? "n/a",
-                style: const TextStyle(color: Colors.white),
-              )),
+            onPressed: () {
+              launchNewsUrl(widget.newsList?.url ?? "");
+              setState(() {
+                isClicked = !isClicked;
+              });
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: isClicked ? Colors.green : Colors.red,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              minimumSize: const Size(50, 30),
+            ),
+            child: Text(
+              widget.newsList?.author ?? "Unknown Author",
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
           Text(
-            newsList?.title ?? "n/a",
+            widget.newsList?.title ?? "No title available",
             style: const TextStyle(color: Colors.white, fontSize: 17),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
@@ -57,23 +79,24 @@ class NewsIconWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: NetworkImage(
-                      (newsList?.urlToImage ?? "n/a"),
-                    ),
+                    image: widget.newsList?.urlToImage != null
+                        ? NetworkImage(widget.newsList!.urlToImage!)
+                        : const AssetImage('assets/images/mt.png')
+                            as ImageProvider,
                   ),
                 ),
               ),
               const SizedBox(width: 5),
               Flexible(
                 child: Text(
-                  newsList?.description.toString() ?? "n/a",
+                  widget.newsList?.description ?? "No description available",
                   style: const TextStyle(color: Colors.white),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
     );

@@ -11,11 +11,10 @@ class ParticularNews extends StatefulWidget {
   State<ParticularNews> createState() => _ParticularNewsState();
 }
 
-final Uri _url = Uri.parse('https://google.com');
-
-Future<void> _launchUrl() async {
-  if (!await launchUrl(_url)) {
-    throw Exception('Could not launch $_url');
+Future<void> launchNewsUrl(String link) async {
+  final Uri url = Uri.parse(link);
+  if (!await launchUrl(url)) {
+    throw Exception('Could not launch $url');
   }
 }
 
@@ -47,8 +46,25 @@ class _ParticularNewsState extends State<ParticularNews> {
               hourlyData.publishedAt?.toString() ?? "n/a",
             ),
             const SizedBox(height: 20),
-            const ElevatedButton(
-                onPressed: _launchUrl, child: Text('Goto Google'))
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 40),
+              ),
+              onPressed: () {
+                launchNewsUrl(
+                    hourlyData.url ?? ""); // Wrap in anonymous function
+              },
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.newspaper_outlined),
+                  SizedBox(width: 10),
+                  Text('Goto News'),
+                ],
+              ),
+            )
           ],
         ),
       ),
